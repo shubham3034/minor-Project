@@ -1,86 +1,176 @@
 import streamlit as st
+import pandas as pd
+import random
 
-# Set page title and icon
-st.set_page_config(page_title="Biotic & Abiotic Environment", page_icon="🌍")
+# --- Quiz Data Structure ---
+quiz_data = [
+    {
+        "question": "Which of these is an **abiotic** component essential for plant growth?",
+        "options": ["Worms", "Decomposers", "Sunlight", "Fungi"],
+        "answer": "Sunlight",
+        "topic": "Abiotic"
+    },
+    {
+        "question": "Organisms that produce their own food (like plants) are called what?",
+        "options": ["Consumers", "Producers", "Decomposers", "Scavengers"],
+        "answer": "Producers",
+        "topic": "Biotic"
+    },
+    {
+        "question": "Temperature, wind, and rainfall are all examples of what kind of factor?",
+        "options": ["Biotic", "Anthropogenic", "Abiotic", "Geological"],
+        "answer": "Abiotic",
+        "topic": "Abiotic"
+    },
+    {
+        "question": "What role do **bacteria and fungi** primarily play in an ecosystem?",
+        "options": ["Primary Consumers", "Producers", "Decomposers", "Predators"],
+        "answer": "Decomposers",
+        "topic": "Biotic"
+    }
+]
 
-# Title and introduction
-st.title("Biotic and Abiotic Components of Environment")
-st.subheader("An Interactive Awareness Initiative")
+# --- Streamlit App Functions ---
 
-# Sidebar for navigation
-option = st.sidebar.selectbox(
-    "Choose a section", 
-    ["Introduction", "Biotic Components", "Abiotic Components", "Awareness Quiz", "How You Can Help"]
-)
+def main_page():
+    """Defines the main content and navigation structure."""
+    
+    st.set_page_config(
+        page_title="Environmental Awareness Project",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+    
+    st.sidebar.title("App Navigation")
+    selection = st.sidebar.radio("Go to:", ["Home & Concepts", "Interactive Quiz", "Awareness & Action"])
+    
+    st.title("🌱 Biotic & Abiotic Components: Environmental Awareness")
+    st.subheader("MCA Minor Project: Understanding the Balance of Nature")
+    
+    st.markdown("---")
+    
+    if selection == "Home & Concepts":
+        display_concepts()
+    elif selection == "Interactive Quiz":
+        run_quiz()
+    elif selection == "Awareness & Action":
+        display_awareness()
 
-# Introduction Section
-if option == "Introduction":
+def display_concepts():
+    """Displays informational content about biotic and abiotic components."""
+    
+    st.header("1. Core Environmental Concepts")
+    st.info("The **environment** is a complex system defined by the interplay between living and non-living elements. Understanding this interaction is key to global sustainability.")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("🌿 Biotic Components (The Living Factors)")
+        st.markdown("""
+        These include all **living or once-living** organisms in an ecosystem. They can be categorized by their role in the food chain:
+        * **Producers:** (e.g., Plants, Algae) Create their own food via photosynthesis.
+        * **Consumers:** (e.g., Animals) Rely on other organisms for food.
+        * **Decomposers:** (e.g., Bacteria, Fungi) Break down dead matter, recycling nutrients.
+        """)
+        
+
+[Image of a food web showing producers, consumers, and decomposers]
+
+
+    with col2:
+        st.subheader("🧊 Abiotic Components (The Non-Living Factors)")
+        st.markdown("""
+        These are the **non-living chemical and physical** parts of the environment that influence living organisms. They provide the fundamental conditions for life.
+        * **Energy:** Sunlight (primary source).
+        * **Climate:** Temperature, humidity, wind, rainfall.
+        * **Substances:** Water, Oxygen, Carbon Dioxide, Soil/Minerals.
+        """)
+        
+    
+    st.markdown("---")
+    st.header("2. The Need for Awareness")
+    st.warning("Ecosystems thrive on **equilibrium**. Human activities often disrupt the balance of biotic (e.g., deforestation) and abiotic (e.g., pollution affecting air quality) components, leading to major environmental crises.")
+
+def run_quiz():
+    """Handles the interactive quiz logic and scoring."""
+    
+    st.header("🧠 Test Your Knowledge: Environmental Quiz")
+    
+    if 'score' not in st.session_state:
+        st.session_state.score = 0
+        st.session_state.attempted = 0
+    
+    st.metric("Current Score", f"{st.session_state.score}/{len(quiz_data)}")
+
+    # Display quiz questions
+    st.markdown("---")
+    
+    # Shuffle questions to make it feel fresh each run
+    random.shuffle(quiz_data)
+    
+    for i, q in enumerate(quiz_data):
+        st.subheader(f"Question {i+1}: {q['question']}")
+        
+        # Use a unique key for each question's radio button and check button
+        radio_key = f"q_radio_{i}"
+        check_key = f"q_check_{i}"
+        
+        # Check if the question has been answered in the current session state
+        answered_key = f"q_answered_{i}"
+        if answered_key not in st.session_state:
+            st.session_state[answered_key] = False
+
+        user_choice = st.radio("Select your answer:", q['options'], key=radio_key, disabled=st.session_state[answered_key])
+        
+        if not st.session_state[answered_key]:
+            if st.button("Submit Answer", key=check_key):
+                st.session_state[answered_key] = True  # Mark as answered
+                st.session_state.attempted += 1
+
+                if user_choice == q['answer']:
+                    st.success("✅ Correct! That's a great understanding of environmental factors.")
+                    st.session_state.score += 1
+                else:
+                    st.error(f"❌ Incorrect. The correct answer is: **{q['answer']}**")
+                
+                # Update the score metric immediately
+                st.experimental_rerun() # Reruns the script to update the score display
+
+    st.markdown("---")
+    if st.session_state.attempted == len(quiz_data) and len(quiz_data) > 0:
+        st.balloons()
+        final_percentage = (st.session_state.score / len(quiz_data)) * 100
+        st.metric("Final Quiz Result", f"{st.session_state.score}/{len(quiz_data)} ({final_percentage:.1f}%)")
+        st.write("Congratulations on completing the quiz! Your knowledge is a powerful tool for environmental advocacy.")
+
+def display_awareness():
+    """Provides statistics and calls to action for environmental awareness."""
+    
+    st.header("🌍 Be the Change: Practical Environmental Action")
+    st.subheader("Why Awareness Matters")
     st.markdown("""
-    ### What is Environment?
-    The environment consists of biotic (living) and abiotic (non-living) components that interact and support all life forms.
-    - **Biotic**: Plants, animals, microorganisms.
-    - **Abiotic**: Air, water, soil, sunlight, temperature.
+    Environmental awareness is the understanding of the environment and the threats it faces. It translates knowledge into **responsible action**.
     """)
-    st.image("https://images.unsplash.com/photo-1503551723145-6c040742065b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZW52aXJvbm1lbnR8ZW58MHx8MHx8fDA%3D&w=1000&q=80", caption="Nature and Environment")
-
-# Biotic Components Section
-elif option == "Biotic Components":
-    st.markdown("""
-    ### Biotic Components (Living)
-    - **Producers**: Plants (make food via photosynthesis).
-    - **Consumers**: Animals (herbivores, carnivores, omnivores).
-    - **Decomposers**: Fungi, bacteria (break down dead matter).
-    - **Examples**: Trees, birds, fish, insects, humans.
-    """)
-    st.image("https://images.unsplash.com/photo-1505238680356-667803448bb6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmxvcmF8ZW58MHx8MHx8fDA%3D&w=1000&q=80", caption="Biotic Diversity")
-
-# Abiotic Components Section
-elif option == "Abiotic Components":
-    st.markdown("""
-    ### Abiotic Components (Non-Living)
-    - **Air**: Essential for respiration and photosynthesis.
-    - **Water**: Supports all life forms.
-    - **Soil**: Provides nutrients and support for plants.
-    - **Sunlight**: Energy source for photosynthesis.
-    - **Temperature & Climate**: Affect ecosystem dynamics.
-    """)
-    st.image("https://images.unsplash.com/photo-1505238680356-667803448bb6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmxvcmF8ZW58MHx8MHx8fDA%3D&w=1000&q=80", caption="Abiotic Factors")
-
-# Awareness Quiz Section
-elif option == "Awareness Quiz":
-    st.markdown("### Test Your Knowledge")
-    q1 = st.radio("Which of the following is a biotic factor?", ["Rainfall", "Plants", "Soil", "Air"])
-    q2 = st.radio("Which is an abiotic factor?", ["Birds", "Sunlight", "Fish", "Trees"])
-    q3 = st.radio("Which component recycles nutrients in the ecosystem?", ["Sunlight", "Water", "Decomposers", "Air"])
-
-    if st.button("Submit Quiz"):
-        score = 0
-        if q1 == "Plants":
-            score += 1
-        if q2 == "Sunlight":
-            score += 1
-        if q3 == "Decomposers":
-            score += 1
-        st.success(f"Your score: {score}/3")
-        if score == 3:
-            st.balloons()
-            st.markdown("🎉 Excellent! You understand the environment well.")
-        elif score >= 1:
-            st.markdown("Good effort! Keep learning about the environment.")
-        else:
-            st.markdown("Keep exploring! The environment is fascinating.")
-
-# How You Can Help Section
-elif option == "How You Can Help":
-    st.markdown("""
-    ### Environmental Awareness Tips
-    - Reduce, reuse, and recycle waste.
-    - Conserve water and energy.
-    - Plant trees and maintain green spaces.
-    - Avoid single-use plastics.
-    - Spread awareness and join local eco-friendly initiatives.
-    """)
-    st.image("https://images.unsplash.com/photo-1505238680356-667803448bb6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmxvcmF8ZW58MHx8MHx8fDA%3D&w=1000&q=80", caption="Go Green")
-
-# Footer
-st.sidebar.info("Created by MCA Student - Minor Project using Python & Streamlit")
+    
+    st.markdown("---")
+    
+    st.subheader("Simple Steps You Can Take:")
+    
+    steps = {
+        "Reduce": "Minimize consumption, buy durable goods, and avoid single-use plastics.",
+        "Reuse": "Find new purposes for old items (upcycling).",
+        "Recycle": "Properly sort waste to conserve natural resources and energy.",
+        "Refuse": "Say NO to products that harm the environment (e.g., plastic bags, excessive packaging).",
+    }
+    
+    for action, detail in steps.items():
+        st.success(f"**{action}:** {detail}")
+        
+    st.markdown("---")
+    
+    st.subheader("Further Reading & Resources")
+    st.write("Explore reputable sources like the UN Environment Programme (UNEP) and local conservation groups to stay informed and find volunteer opportunities.")
+    
+# --- Run the App ---
+if __name__ == "__main__":
+    main_page()
