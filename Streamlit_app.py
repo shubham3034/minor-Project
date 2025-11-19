@@ -45,7 +45,6 @@ def main_page():
     selection = st.sidebar.radio("Go to:", ["Home & Concepts", "Interactive Quiz", "Awareness & Action"])
     
     st.title("🌱 Biotic & Abiotic Components: Environmental Awareness")
-    st.subheader("MCA Minor Project: Understanding the Balance of Nature")
     
     st.markdown("---")
     
