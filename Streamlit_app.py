@@ -1,121 +1,117 @@
 import streamlit as st
+import matplotlib.pyplot as plt
+import numpy as np
 
-# ---------------------------------------------------
-# PAGE CONFIG
-# ---------------------------------------------------
-st.set_page_config(page_title="GreenScore Calculator", page_icon="🌿", layout="wide")
+# ---------------------------------------------
+# CSS STYLING
+# ---------------------------------------------
+st.markdown("""
+    <style>
+    .title {
+        text-align: center;
+        font-size: 40px;
+        color: #2E8B57;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+    .subtitle {
+        text-align: center;
+        font-size: 22px;
+        color: #444;
+        margin-top: -10px;
+        margin-bottom: 30px;
+    }
+    .card {
+        padding: 15px;
+        background: #f0f8f5;
+        border-radius: 10px;
+        border: 1px solid #c7e5d0;
+        margin-bottom: 20px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-st.title("🌍 GreenScore – Personal Environmental Impact Calculator")
-st.write("""
-This simple tool calculates your daily environmental impact score based on 
-your lifestyle habits such as water usage, electricity consumption, fuel usage, and waste generation.  
-A lower score means a greener lifestyle.
-""")
+# ---------------------------------------------
+# PAGE TITLE
+# ---------------------------------------------
+st.markdown("<div class='title'>Eco-System Simulation Web App</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Biotic & Abiotic Interaction Visualizer</div>", unsafe_allow_html=True)
 
-st.divider()
 
-# ---------------------------------------------------
-# USER INPUT SECTION
-# ---------------------------------------------------
-st.header("📥 Enter Your Daily Usage")
+# ---------------------------------------------
+# INPUT SECTION
+# ---------------------------------------------
+st.markdown("### 🔧 Adjust Abiotic Factors")
 
-col1, col2 = st.columns(2)
+temp = st.slider("🌡 Temperature (°C)", 0, 50, 25)
+rain = st.slider("🌧 Rainfall (mm)", 0, 300, 120)
+co2 = st.slider("🟩 CO₂ Level (ppm)", 200, 800, 400)
+ph = st.slider("🧪 Soil pH", 1.0, 14.0, 7.0)
 
-with col1:
-    water = st.slider("Daily Water Usage (Liters)", 20, 500, 100)
-    electricity = st.slider("Daily Electricity Usage (kWh)", 1, 50, 10)
 
-with col2:
-    fuel = st.slider("Daily Fuel Usage (Liters)", 0, 20, 2)
-    waste = st.slider("Daily Waste Generated (kg)", 0, 5, 1)
+# ---------------------------------------------
+# SIMULATION MODEL (Simple Rule-Based)
+# ---------------------------------------------
+def plant_growth(temp, rain, co2, ph):
+    score = 100
+    score -= abs(temp - 25) * 2
+    score -= abs(rain - 120) * 0.3
+    score -= abs(ph - 7) * 8
+    score += (co2 - 350) * 0.05
+    return max(0, min(100, int(score)))
 
-st.divider()
+def biodiversity(temp, rain, ph):
+    score = 90
+    score -= abs(temp - 22) * 1.5
+    score -= abs(rain - 150) * 0.2
+    score -= abs(ph - 6.8) * 5
+    return max(0, min(100, int(score)))
 
-# ---------------------------------------------------
-# SCORE CALCULATION
-# ---------------------------------------------------
-st.header("📊 Your GreenScore")
+def ecosystem_stability(pg, bd):
+    return int((pg + bd) / 2)
 
-# Lower is better
-score = (
-    (water / 500) * 25 +
-    (electricity / 50) * 25 +
-    (fuel / 20) * 25 +
-    (waste / 5) * 25
-)
 
-score = round(score, 2)
+pg = plant_growth(temp, rain, co2, ph)
+bd = biodiversity(temp, rain, ph)
+es = ecosystem_stability(pg, bd)
 
-# ---------------------------------------------------
-# SCORE DISPLAY
-# ---------------------------------------------------
-if score <= 25:
-    remark = "🌟 Excellent! Very Eco-friendly Lifestyle."
-    color = "green"
-elif score <= 50:
-    remark = "👍 Good. Some improvements can be made."
-    color = "orange"
-elif score <= 75:
-    remark = "⚠️ Not great. Start reducing your environmental footprint."
-    color = "red"
+
+# ---------------------------------------------
+# RESULTS SECTION
+# ---------------------------------------------
+st.markdown("### 📊 Simulation Results")
+col1, col2, col3 = st.columns(3)
+
+col1.markdown(f"<div class='card'><h3>🌱 Plant Growth</h3><h2>{pg}%</h2></div>", unsafe_allow_html=True)
+col2.markdown(f"<div class='card'><h3>🦋 Biodiversity</h3><h2>{bd}%</h2></div>", unsafe_allow_html=True)
+col3.markdown(f"<div class='card'><h3>🌍 Ecosystem Stability</h3><h2>{es}%</h2></div>", unsafe_allow_html=True)
+
+
+# ---------------------------------------------
+# AWARENESS MESSAGE
+# ---------------------------------------------
+st.markdown("### 🌿 Awareness Insight")
+
+if es > 80:
+    st.success("The ecosystem is stable. Current abiotic conditions support rich plant and animal life.")
+elif es > 50:
+    st.warning("The ecosystem is moderately stable. Minor environmental imbalances detected.")
 else:
-    remark = "🚨 High impact! Immediate lifestyle changes recommended."
-    color = "darkred"
+    st.error("The ecosystem is unstable. Abiotic factors are outside optimal ranges.")
 
-st.markdown(
-    f"""
-    <div style='padding:15px; background-color:{color}; color:white; border-radius:10px;'>
-        <h2 style='text-align:center;'>GreenScore: {score} / 100</h2>
-        <h4 style='text-align:center;'>{remark}</h4>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
-st.divider()
+# ---------------------------------------------
+# GRAPH SECTION
+# ---------------------------------------------
+st.markdown("### 📈 Visualization")
 
-# ---------------------------------------------------
-# RECOMMENDATIONS
-# ---------------------------------------------------
-st.header("💡 Personalized Recommendations")
+labels = ["Plant Growth", "Biodiversity", "Stability"]
+values = [pg, bd, es]
 
-st.write("Based on your impact score, here are some tips:")
+fig, ax = plt.subplots()
+ax.bar(labels, values)
+ax.set_ylim(0, 100)
+ax.set_ylabel("Score (%)")
+ax.set_title("Ecosystem Health Parameters")
 
-if score <= 25:
-    st.success("You are already following a very sustainable lifestyle. Keep inspiring others!")
-elif score <= 50:
-    st.write("""
-    - Reduce unnecessary water usage  
-    - Switch to LED lights  
-    - Use public transport more often  
-    - Recycle plastic and paper  
-    """)
-elif score <= 75:
-    st.write("""
-    - Reduce shower duration  
-    - Turn off appliances when not needed  
-    - Carpool or use bicycles  
-    - Start composting organic waste  
-    """)
-else:
-    st.write("""
-    - Immediately reduce water & electricity usage  
-    - Consider renewable energy sources  
-    - Avoid single-use plastics completely  
-    - Use public transport or electric alternatives  
-    """)
-
-st.divider()
-
-# ---------------------------------------------------
-# ABOUT THE PROJECT
-# ---------------------------------------------------
-st.header("📚 About This Project")
-st.write("""
-This tool helps users understand how their everyday habits affect the environment.
-It promotes awareness about ecological balance by scoring lifestyle choices
-based on water, energy, fuel, and waste consumption.
-""")
-
-st.info("You can host this online on Streamlit Cloud using this exact file.")
-
+st.pyplot(fig)
