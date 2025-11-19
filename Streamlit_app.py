@@ -72,11 +72,8 @@ def display_concepts():
         * **Consumers:** (e.g., Animals) Rely on other organisms for food.
         * **Decomposers:** (e.g., Bacteria, Fungi) Break down dead matter, recycling nutrients.
         """)
-        # Placeholder removed/commented out: 
-
-[Image of a food web showing producers, consumers, and decomposers]
-
-
+        # If you want to add an image later, use: st.image("your_image_name.png", caption="Food Web Diagram")
+        
     with col2:
         st.subheader("🧊 Abiotic Components (The Non-Living Factors)")
         st.markdown("""
@@ -85,7 +82,7 @@ def display_concepts():
         * **Climate:** Temperature, humidity, wind, rainfall.
         * **Substances:** Water, Oxygen, Carbon Dioxide, Soil/Minerals.
         """)
-        # Placeholder removed/commented out: 
+        # If you want to add an image later, use: st.image("your_image_name.png", caption="Abiotic Factors")
     
     st.markdown("---")
     st.header("2. The Need for Awareness")
@@ -137,11 +134,15 @@ def run_quiz():
                 st.experimental_rerun() # Reruns the script to update the score display
 
     st.markdown("---")
+    # Only show the final results if all questions have been attempted
     if st.session_state.attempted == len(quiz_data) and len(quiz_data) > 0:
         st.balloons()
         final_percentage = (st.session_state.score / len(quiz_data)) * 100
         st.metric("Final Quiz Result", f"{st.session_state.score}/{len(quiz_data)} ({final_percentage:.1f}%)")
         st.write("Congratulations on completing the quiz! Your knowledge is a powerful tool for environmental advocacy.")
+    elif st.session_state.attempted > 0:
+        st.info(f"You have answered {st.session_state.attempted} out of {len(quiz_data)} questions.")
+
 
 def display_awareness():
     """Provides statistics and calls to action for environmental awareness."""
