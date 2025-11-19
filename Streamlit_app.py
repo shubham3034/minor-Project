@@ -1,116 +1,140 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 
-# -----------------------------------------------------------------------------------
+# -------------------------------
 # PAGE CONFIG
-# -----------------------------------------------------------------------------------
-st.set_page_config(page_title="Smart Waste Segregation", page_icon="♻️", layout="wide")
+# -------------------------------
+st.set_page_config(
+    page_title="Environmental Impact & Awareness Portal",
+    page_icon="🌱",
+    layout="wide",
+)
 
-st.title("♻️ Smart Waste Segregation Awareness System")
-st.write("""
-This tool helps users correctly identify the category of waste (Wet, Dry, Hazardous, E-waste) 
-and provides proper disposal methods based on the material they enter.
-""")
+# -------------------------------
+# TITLE
+# -------------------------------
+st.title("🌍 Environmental Impact Calculator & Awareness Portal")
+st.write("This tool helps users understand how daily human activities affect biotic and abiotic components of the environment.")
 
-st.divider()
+# -------------------------------
+# SIDEBAR MENU
+# -------------------------------
+menu = st.sidebar.radio(
+    "Navigation",
+    ["Home", "Environmental Calculator", "Biotic & Abiotic Info", "Awareness Tips"]
+)
 
-# -----------------------------------------------------------------------------------
-# INPUT SECTION
-# -----------------------------------------------------------------------------------
-st.header("🗑️ Enter the Waste Item")
+# -------------------------------
+# HOME PAGE
+# -------------------------------
+if menu == "Home":
+    st.header("🌱 Introduction")
+    st.write("""
+    Environmental awareness is the foundation of conserving biotic and abiotic components.
+    
+    **Biotic components** include:
+    - Plants  
+    - Animals  
+    - Microorganisms  
 
-user_input = st.text_input("Type the name of the waste item:", placeholder="Example: Banana peel, Plastic bottle, Battery")
+    **Abiotic components** include:
+    - Air  
+    - Water  
+    - Soil  
+    - Temperature  
+    - Sunlight  
 
-st.divider()
+    This project provides:
+    - A calculator to show how your lifestyle affects the environment  
+    - Educational content  
+    - Awareness-building tips  
+    """)
 
-# -----------------------------------------------------------------------------------
-# WASTE CLASSIFICATION LOGIC
-# -----------------------------------------------------------------------------------
-def classify_waste(item):
+# -------------------------------
+# ENVIRONMENTAL IMPACT CALCULATOR
+# -------------------------------
+elif menu == "Environmental Calculator":
+    st.header("♻️ Environmental Impact Calculator")
 
-    item = item.lower()
+    st.write("Enter your daily habits to estimate environmental impact.")
 
-    wet = ["food", "banana", "vegetable", "fruit", "peel", "tea", "coffee", "leftover", "flower"]
-    dry = ["plastic", "paper", "cardboard", "glass", "can", "bottle", "metal"]
-    hazardous = ["battery", "paint", "chemical", "medicine", "thermometer"]
-    ewaste = ["mobile", "laptop", "charger", "cable", "earphone", "computer"]
+    col1, col2 = st.columns(2)
 
-    if any(word in item for word in wet):
-        return "Wet Waste", "Use compost bins. Converts into natural fertilizer."
-    elif any(word in item for word in dry):
-        return "Dry Waste", "Send for recycling. Keep dry and clean before disposal."
-    elif any(word in item for word in hazardous):
-        return "Hazardous Waste", "Dispose at authorized collection centers. Avoid mixing."
-    elif any(word in item for word in ewaste):
-        return "E-Waste", "Return to e-waste centers or electronic stores for safe recycling."
-    else:
-        return "Unknown", "Item not recognized. Try using a more specific name."
+    with col1:
+        electricity = st.number_input("Daily Electricity Usage (kWh)", 0.0, 50.0, 5.0)
+        water = st.number_input("Daily Water Usage (litres)", 0.0, 2000.0, 200.0)
 
-# -----------------------------------------------------------------------------------
-# OUTPUT SECTION
-# -----------------------------------------------------------------------------------
-if user_input:
-    category, instruction = classify_waste(user_input)
+    with col2:
+        travel = st.number_input("Daily Travel Distance (km)", 0.0, 200.0, 10.0)
+        waste = st.number_input("Daily Waste Generated (kg)", 0.0, 10.0, 1.0)
 
-    st.subheader("🧾 Classification Result")
-    color = "green" if category != "Unknown" else "red"
+    if st.button("Calculate Impact"):
+        # Simple environmental impact scoring formula
+        impact_score = (electricity * 0.8) + (water * 0.02) + (travel * 1.2) + (waste * 5)
 
-    st.markdown(
-        f"""
-        <div style='padding:20px; background-color:{color}; color:white; border-radius:12px;'>
-            <h2 style='text-align:center;'>Category: {category}</h2>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        st.subheader("Your Daily Environmental Impact Score:")
+        st.success(f"**{impact_score:.2f} points**")
 
-    st.write("### 📌 Disposal Method")
-    st.write(instruction)
+        # Chart Data
+        df = pd.DataFrame({
+            "Component": ["Electricity", "Water", "Travel", "Waste"],
+            "Impact Value": [
+                electricity * 0.8,
+                water * 0.02,
+                travel * 1.2,
+                waste * 5
+            ]
+        })
 
-st.divider()
+        fig = px.bar(df, x="Component", y="Impact Value", title="Environmental Impact Breakdown")
+        st.plotly_chart(fig)
 
-# -----------------------------------------------------------------------------------
-# EDUCATIONAL SECTION
-# -----------------------------------------------------------------------------------
-st.header("📘 Waste Categories Explained")
+# -------------------------------
+# EDUCATION SECTION
+# -------------------------------
+elif menu == "Biotic & Abiotic Info":
+    st.header("📘 Biotic & Abiotic Components")
 
-st.write("""
-**1. Wet Waste**  
-Organic waste like vegetables, fruits, leftover food, flowers, tea waste.
+    st.subheader("🌿 Biotic Components (Living)")
+    st.info("""
+    - Plants  
+    - Animals  
+    - Microorganisms  
+    - Humans  
+    """)
+    
+    st.subheader("🌎 Abiotic Components (Non-living)")
+    st.info("""
+    - Air  
+    - Water  
+    - Soil  
+    - Temperature  
+    - Light  
+    - Minerals  
+    """)
 
-**2. Dry Waste**  
-Paper, plastic, cardboard, metals, glass, and packaging materials.
+    st.write("""
+    Both components interact constantly. Disruption in abiotic factors (pollution, climate change)
+    affects biotic life and ecological balance.
+    """)
 
-**3. Hazardous Waste**  
-Batteries, chemicals, medicines, paints — anything toxic.
+# -------------------------------
+# AWARENESS TIPS SECTION
+# -------------------------------
+elif menu == "Awareness Tips":
+    st.header("🌟 Environmental Awareness Tips")
 
-**4. E-Waste**  
-Electronics such as mobiles, laptops, chargers, earphones, wires.
-""")
+    tips = [
+        "Reduce electricity usage by turning off unused appliances.",
+        "Use public transport or carpool whenever possible.",
+        "Avoid single-use plastics.",
+        "Recycle household waste.",
+        "Plant at least one tree every year.",
+        "Save water by reducing shower time.",
+        "Use energy-efficient lighting.",
+        "Support eco-friendly brands."
+    ]
 
-st.divider()
-
-# -----------------------------------------------------------------------------------
-# TIPS
-# -----------------------------------------------------------------------------------
-st.header("💡 Smart Waste Management Tips")
-
-st.write("""
-- Always separate wet and dry waste at home  
-- Do not mix batteries or chemicals with general waste  
-- Give E-waste only to certified recycling agencies  
-- Wash and dry recyclable items before disposal  
-- Avoid single-use plastics  
-""")
-
-st.divider()
-
-# -----------------------------------------------------------------------------------
-# ABOUT THE PROJECT
-# -----------------------------------------------------------------------------------
-st.header("📚 About This Project")
-st.write("""
-This system helps promote environmental awareness by teaching proper waste segregation habits.
-It identifies waste items and suggests correct disposal methods to reduce pollution.
-""")
-
-st.info("This app is optimized for easy deployment on Streamlit Cloud.")
+    for t in tips:
+        st.markdown(f"✔️ {t}")
