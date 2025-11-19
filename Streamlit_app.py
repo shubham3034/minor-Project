@@ -85,7 +85,7 @@ def main():
     )
     
     st.title("⚖️ Abiotic Balance: Interactive Ecosystem Health Calculator")
-    st.subheader("MCA Minor Project: Demonstrating Environmental Sensitivity")
+    st.subheader("Project: Demonstrating Environmental Sensitivity")
     st.markdown("---")
     
     st.sidebar.title("App Navigation")
