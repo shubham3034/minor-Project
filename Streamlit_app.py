@@ -72,7 +72,7 @@ def display_concepts():
         * **Consumers:** (e.g., Animals) Rely on other organisms for food.
         * **Decomposers:** (e.g., Bacteria, Fungi) Break down dead matter, recycling nutrients.
         """)
-        
+        # Placeholder removed/commented out: 
 
 [Image of a food web showing producers, consumers, and decomposers]
 
@@ -85,7 +85,7 @@ def display_concepts():
         * **Climate:** Temperature, humidity, wind, rainfall.
         * **Substances:** Water, Oxygen, Carbon Dioxide, Soil/Minerals.
         """)
-        
+        # Placeholder removed/commented out: 
     
     st.markdown("---")
     st.header("2. The Need for Awareness")
