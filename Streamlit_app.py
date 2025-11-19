@@ -1,121 +1,116 @@
 import streamlit as st
 
-# ---------------------------------------------------
+# -----------------------------------------------------------------------------------
 # PAGE CONFIG
-# ---------------------------------------------------
-st.set_page_config(page_title="GreenScore Calculator", page_icon="🌿", layout="wide")
+# -----------------------------------------------------------------------------------
+st.set_page_config(page_title="Smart Waste Segregation", page_icon="♻️", layout="wide")
 
-st.title("🌍 GreenScore – Personal Environmental Impact Calculator")
+st.title("♻️ Smart Waste Segregation Awareness System")
 st.write("""
-This simple tool calculates your daily environmental impact score based on 
-your lifestyle habits such as water usage, electricity consumption, fuel usage, and waste generation.  
-A lower score means a greener lifestyle.
+This tool helps users correctly identify the category of waste (Wet, Dry, Hazardous, E-waste) 
+and provides proper disposal methods based on the material they enter.
 """)
 
 st.divider()
 
-# ---------------------------------------------------
-# USER INPUT SECTION
-# ---------------------------------------------------
-st.header("📥 Enter Your Daily Usage")
+# -----------------------------------------------------------------------------------
+# INPUT SECTION
+# -----------------------------------------------------------------------------------
+st.header("🗑️ Enter the Waste Item")
 
-col1, col2 = st.columns(2)
-
-with col1:
-    water = st.slider("Daily Water Usage (Liters)", 20, 500, 100)
-    electricity = st.slider("Daily Electricity Usage (kWh)", 1, 50, 10)
-
-with col2:
-    fuel = st.slider("Daily Fuel Usage (Liters)", 0, 20, 2)
-    waste = st.slider("Daily Waste Generated (kg)", 0, 5, 1)
+user_input = st.text_input("Type the name of the waste item:", placeholder="Example: Banana peel, Plastic bottle, Battery")
 
 st.divider()
 
-# ---------------------------------------------------
-# SCORE CALCULATION
-# ---------------------------------------------------
-st.header("📊 Your GreenScore")
+# -----------------------------------------------------------------------------------
+# WASTE CLASSIFICATION LOGIC
+# -----------------------------------------------------------------------------------
+def classify_waste(item):
 
-# Lower is better
-score = (
-    (water / 500) * 25 +
-    (electricity / 50) * 25 +
-    (fuel / 20) * 25 +
-    (waste / 5) * 25
-)
+    item = item.lower()
 
-score = round(score, 2)
+    wet = ["food", "banana", "vegetable", "fruit", "peel", "tea", "coffee", "leftover", "flower"]
+    dry = ["plastic", "paper", "cardboard", "glass", "can", "bottle", "metal"]
+    hazardous = ["battery", "paint", "chemical", "medicine", "thermometer"]
+    ewaste = ["mobile", "laptop", "charger", "cable", "earphone", "computer"]
 
-# ---------------------------------------------------
-# SCORE DISPLAY
-# ---------------------------------------------------
-if score <= 25:
-    remark = "🌟 Excellent! Very Eco-friendly Lifestyle."
-    color = "green"
-elif score <= 50:
-    remark = "👍 Good. Some improvements can be made."
-    color = "orange"
-elif score <= 75:
-    remark = "⚠️ Not great. Start reducing your environmental footprint."
-    color = "red"
-else:
-    remark = "🚨 High impact! Immediate lifestyle changes recommended."
-    color = "darkred"
+    if any(word in item for word in wet):
+        return "Wet Waste", "Use compost bins. Converts into natural fertilizer."
+    elif any(word in item for word in dry):
+        return "Dry Waste", "Send for recycling. Keep dry and clean before disposal."
+    elif any(word in item for word in hazardous):
+        return "Hazardous Waste", "Dispose at authorized collection centers. Avoid mixing."
+    elif any(word in item for word in ewaste):
+        return "E-Waste", "Return to e-waste centers or electronic stores for safe recycling."
+    else:
+        return "Unknown", "Item not recognized. Try using a more specific name."
 
-st.markdown(
-    f"""
-    <div style='padding:15px; background-color:{color}; color:white; border-radius:10px;'>
-        <h2 style='text-align:center;'>GreenScore: {score} / 100</h2>
-        <h4 style='text-align:center;'>{remark}</h4>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# -----------------------------------------------------------------------------------
+# OUTPUT SECTION
+# -----------------------------------------------------------------------------------
+if user_input:
+    category, instruction = classify_waste(user_input)
 
-st.divider()
+    st.subheader("🧾 Classification Result")
+    color = "green" if category != "Unknown" else "red"
 
-# ---------------------------------------------------
-# RECOMMENDATIONS
-# ---------------------------------------------------
-st.header("💡 Personalized Recommendations")
+    st.markdown(
+        f"""
+        <div style='padding:20px; background-color:{color}; color:white; border-radius:12px;'>
+            <h2 style='text-align:center;'>Category: {category}</h2>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-st.write("Based on your impact score, here are some tips:")
-
-if score <= 25:
-    st.success("You are already following a very sustainable lifestyle. Keep inspiring others!")
-elif score <= 50:
-    st.write("""
-    - Reduce unnecessary water usage  
-    - Switch to LED lights  
-    - Use public transport more often  
-    - Recycle plastic and paper  
-    """)
-elif score <= 75:
-    st.write("""
-    - Reduce shower duration  
-    - Turn off appliances when not needed  
-    - Carpool or use bicycles  
-    - Start composting organic waste  
-    """)
-else:
-    st.write("""
-    - Immediately reduce water & electricity usage  
-    - Consider renewable energy sources  
-    - Avoid single-use plastics completely  
-    - Use public transport or electric alternatives  
-    """)
+    st.write("### 📌 Disposal Method")
+    st.write(instruction)
 
 st.divider()
 
-# ---------------------------------------------------
+# -----------------------------------------------------------------------------------
+# EDUCATIONAL SECTION
+# -----------------------------------------------------------------------------------
+st.header("📘 Waste Categories Explained")
+
+st.write("""
+**1. Wet Waste**  
+Organic waste like vegetables, fruits, leftover food, flowers, tea waste.
+
+**2. Dry Waste**  
+Paper, plastic, cardboard, metals, glass, and packaging materials.
+
+**3. Hazardous Waste**  
+Batteries, chemicals, medicines, paints — anything toxic.
+
+**4. E-Waste**  
+Electronics such as mobiles, laptops, chargers, earphones, wires.
+""")
+
+st.divider()
+
+# -----------------------------------------------------------------------------------
+# TIPS
+# -----------------------------------------------------------------------------------
+st.header("💡 Smart Waste Management Tips")
+
+st.write("""
+- Always separate wet and dry waste at home  
+- Do not mix batteries or chemicals with general waste  
+- Give E-waste only to certified recycling agencies  
+- Wash and dry recyclable items before disposal  
+- Avoid single-use plastics  
+""")
+
+st.divider()
+
+# -----------------------------------------------------------------------------------
 # ABOUT THE PROJECT
-# ---------------------------------------------------
+# -----------------------------------------------------------------------------------
 st.header("📚 About This Project")
 st.write("""
-This tool helps users understand how their everyday habits affect the environment.
-It promotes awareness about ecological balance by scoring lifestyle choices
-based on water, energy, fuel, and waste consumption.
+This system helps promote environmental awareness by teaching proper waste segregation habits.
+It identifies waste items and suggests correct disposal methods to reduce pollution.
 """)
 
-st.info("You can host this online on Streamlit Cloud using this exact file.")
-
+st.info("This app is optimized for easy deployment on Streamlit Cloud.")
