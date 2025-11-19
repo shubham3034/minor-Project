@@ -1,159 +1,121 @@
 import streamlit as st
-import random
-import pandas as pd
-import plotly.express as px
 
-# ------------------------------
+# ---------------------------------------------------
 # PAGE CONFIG
-# ------------------------------
-st.set_page_config(page_title="Eco Awareness Portal",
-                   layout="wide",
-                   page_icon="🌿")
+# ---------------------------------------------------
+st.set_page_config(page_title="GreenScore Calculator", page_icon="🌿", layout="wide")
 
-# ------------------------------
-# SIDEBAR NAVIGATION
-# ------------------------------
-st.sidebar.title("🌍 Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Biotic Components", "Abiotic Components",
-                                  "Environmental Charts", "Quiz"])
+st.title("🌍 GreenScore – Personal Environmental Impact Calculator")
+st.write("""
+This simple tool calculates your daily environmental impact score based on 
+your lifestyle habits such as water usage, electricity consumption, fuel usage, and waste generation.  
+A lower score means a greener lifestyle.
+""")
 
-# =====================================================================
-# HOME PAGE
-# =====================================================================
+st.divider()
 
-if page == "Home":
-    st.title("🌿 Eco Awareness Portal")
-    st.subheader("Biotic & Abiotic Components of Environment")
+# ---------------------------------------------------
+# USER INPUT SECTION
+# ---------------------------------------------------
+st.header("📥 Enter Your Daily Usage")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    water = st.slider("Daily Water Usage (Liters)", 20, 500, 100)
+    electricity = st.slider("Daily Electricity Usage (kWh)", 1, 50, 10)
+
+with col2:
+    fuel = st.slider("Daily Fuel Usage (Liters)", 0, 20, 2)
+    waste = st.slider("Daily Waste Generated (kg)", 0, 5, 1)
+
+st.divider()
+
+# ---------------------------------------------------
+# SCORE CALCULATION
+# ---------------------------------------------------
+st.header("📊 Your GreenScore")
+
+# Lower is better
+score = (
+    (water / 500) * 25 +
+    (electricity / 50) * 25 +
+    (fuel / 20) * 25 +
+    (waste / 5) * 25
+)
+
+score = round(score, 2)
+
+# ---------------------------------------------------
+# SCORE DISPLAY
+# ---------------------------------------------------
+if score <= 25:
+    remark = "🌟 Excellent! Very Eco-friendly Lifestyle."
+    color = "green"
+elif score <= 50:
+    remark = "👍 Good. Some improvements can be made."
+    color = "orange"
+elif score <= 75:
+    remark = "⚠️ Not great. Start reducing your environmental footprint."
+    color = "red"
+else:
+    remark = "🚨 High impact! Immediate lifestyle changes recommended."
+    color = "darkred"
+
+st.markdown(
+    f"""
+    <div style='padding:15px; background-color:{color}; color:white; border-radius:10px;'>
+        <h2 style='text-align:center;'>GreenScore: {score} / 100</h2>
+        <h4 style='text-align:center;'>{remark}</h4>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.divider()
+
+# ---------------------------------------------------
+# RECOMMENDATIONS
+# ---------------------------------------------------
+st.header("💡 Personalized Recommendations")
+
+st.write("Based on your impact score, here are some tips:")
+
+if score <= 25:
+    st.success("You are already following a very sustainable lifestyle. Keep inspiring others!")
+elif score <= 50:
     st.write("""
-    This portal helps users understand how living (biotic) and non-living (abiotic)
-    components interact to shape the environment.  
-    Explore the modules to learn, visualize, and test your awareness!
+    - Reduce unnecessary water usage  
+    - Switch to LED lights  
+    - Use public transport more often  
+    - Recycle plastic and paper  
+    """)
+elif score <= 75:
+    st.write("""
+    - Reduce shower duration  
+    - Turn off appliances when not needed  
+    - Carpool or use bicycles  
+    - Start composting organic waste  
+    """)
+else:
+    st.write("""
+    - Immediately reduce water & electricity usage  
+    - Consider renewable energy sources  
+    - Avoid single-use plastics completely  
+    - Use public transport or electric alternatives  
     """)
 
-    st.image("https://cdn.pixabay.com/photo/2020/05/28/16/29/environment-5231737_1280.jpg")
+st.divider()
 
-    st.info("Use the left navigation panel to explore the content.")
+# ---------------------------------------------------
+# ABOUT THE PROJECT
+# ---------------------------------------------------
+st.header("📚 About This Project")
+st.write("""
+This tool helps users understand how their everyday habits affect the environment.
+It promotes awareness about ecological balance by scoring lifestyle choices
+based on water, energy, fuel, and waste consumption.
+""")
 
-# =====================================================================
-# BIOTIC COMPONENTS
-# =====================================================================
-
-elif page == "Biotic Components":
-    st.title("🌱 Biotic Components")
-    st.write("""
-    Biotic components are **living organisms** in the environment, such as:
-    - Plants  
-    - Animals  
-    - Microorganisms  
-    """)
-
-    st.subheader("Examples")
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.image("https://cdn.pixabay.com/photo/2016/10/18/21/21/forest-1758766_1280.jpg")
-        st.caption("Plants – Primary producers")
-
-    with col2:
-        st.image("https://cdn.pixabay.com/photo/2018/03/28/17/24/tiger-3278854_1280.jpg")
-        st.caption("Animals – Consumers")
-
-    st.write("""
-    Biotic components depend on abiotic factors such as sunlight, water, temperature, and soil nutrients.
-    """)
-
-# =====================================================================
-# ABIOTIC COMPONENTS
-# =====================================================================
-
-elif page == "Abiotic Components":
-    st.title("🌞 Abiotic Components")
-    st.write("""
-    Abiotic components include **non-living physical and chemical parts** of the environment:
-    - Water  
-    - Air  
-    - Soil  
-    - Temperature  
-    - Light  
-    """)
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.image("https://cdn.pixabay.com/photo/2016/11/29/03/28/water-1867697_1280.jpg")
-        st.caption("Water – Essential for all life")
-
-    with col2:
-        st.image("https://cdn.pixabay.com/photo/2016/11/18/16/52/nature-1834663_1280.jpg")
-        st.caption("Soil – Habitat & nutrients for plants")
-
-    st.success("Abiotic factors directly influence the survival of biotic organisms.")
-
-# =====================================================================
-# ENVIRONMENTAL CHARTS
-# =====================================================================
-
-elif page == "Environmental Charts":
-    st.title("📊 Environmental Interaction Charts")
-
-    st.write("Here is a simulated interaction chart showing how abiotic changes affect plant growth.")
-
-    data = {
-        "Temperature": ["Low", "Moderate", "High"],
-        "Growth Rate": [20, 80, 40]
-    }
-
-    df = pd.DataFrame(data)
-    fig = px.bar(df, x="Temperature", y="Growth Rate",
-                 title="Effect of Temperature on Plant Growth")
-
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.write("""
-    **Observation:**  
-    - Moderate temperature results in maximum growth.  
-    - Extreme conditions reduce plant productivity.  
-    """)
-
-# =====================================================================
-# QUIZ PAGE
-# =====================================================================
-
-elif page == "Quiz":
-    st.title("📝 Environmental Awareness Quiz")
-
-    questions = {
-        "Which of these is a biotic component?": ["Soil", "Plant", "Water", "Light"],
-        "Which factor affects abiotic components?": ["Temperature", "Animals", "Plants", "Microbes"],
-        "Oxygen is produced mainly by?": ["Animals", "Machines", "Plants", "Vehicles"],
-        "Which is not an abiotic factor?": ["Air", "Sunlight", "Bacteria", "Water"]
-    }
-
-    answers = {
-        "Which of these is a biotic component?": "Plant",
-        "Which factor affects abiotic components?": "Temperature",
-        "Oxygen is produced mainly by?": "Plants",
-        "Which is not an abiotic factor?": "Bacteria"
-    }
-
-    score = 0
-    user_answers = {}
-
-    for q, options in questions.items():
-        user_choice = st.radio(q, options)
-        user_answers[q] = user_choice
-
-    if st.button("Submit Quiz"):
-        for q in questions:
-            if user_answers[q] == answers[q]:
-                score += 1
-
-        st.success(f"Your Score: {score} / {len(questions)}")
-
-        if score == 4:
-            st.balloons()
-
-        st.subheader("Correct Answers:")
-        for q in answers:
-            st.write(f"**{q}** → {answers[q]}")
+st.info("You can host this online on Streamlit Cloud using this exact file.")
 
