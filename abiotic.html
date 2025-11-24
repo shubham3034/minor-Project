@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Abiotic Components</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<header class="site-header">
+<div class="container header-inner">
+<div class="brand">
+<h1>Abiotic Components</h1>
+<p class="tag">Non-living physical & chemical factors</p>
+</div>
+
+<nav class="main-nav">
+<a href="index.html">Home</a>
+<a href="biotic.html">Biotic</a>
+<a href="abiotic.html" class="active">Abiotic</a>
+<a href="awareness.html">Awareness</a>
+<a href="quiz.html">Quiz</a>
+</nav>
+</div>
+</header>
+
+
+<main class="container">
+
+<section class="content-intro fade-in">
+<h2>What Are Abiotic Components?</h2>
+<p>
+Abiotic components are the non-living factors such as sunlight, temperature, water,
+soil, and minerals that influence how ecosystems function and determine which
+organisms can survive.
+</p>
+</section>
+
+<section class="cards-grid">
+
+<div class="card pop">
+<h3>Climate</h3>
+<p>Temperature, humidity, and atmospheric conditions shape species distribution and environmental patterns.</p>
+</div>
+
+<div class="card pop">
+<h3>Soil & Minerals</h3>
+<p>The mineral content and soil structure determine plant growth and microorganism activity.</p>
+</div>
+
+<div class="card pop">
+<h3>Water</h3>
+<p>Water availability affects life processes, population density, and ecosystem productivity.</p>
+</div>
+
+<div class="card pop">
+<h3>Sunlight</h3>
+<p>Sunlight drives photosynthesis and influences biological cycles.</p>
+</div>
+
+</section>
+
+
+<section class="interactive fade-in">
+<h2>Interactive Model</h2>
+<p>Adjust the sliders to see how abiotic conditions may influence plant growth.</p>
+
+<div class="controls">
+<label>Temperature: <span id="tempVal">25</span> °C</label>
+<input id="temp" type="range" min="0" max="50" value="25">
+
+<label>Rainfall: <span id="rainVal">50</span> mm/month</label>
+<input id="rain" type="range" min="0" max="200" value="50">
+</div>
+
+<div id="modelResult" class="model-result">
+Plant growth index:
+<strong id="growth">0.65</strong>
+</div>
+
+</section>
+
+</main>
+
+
+<footer class="site-footer">
+<div class="container footer-inner">
+<p>© 2025 Environment Explorer</p>
+</div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

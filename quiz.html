@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Quiz — Environment Explorer</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">
+      <h1>Quick Quiz</h1>
+      <p class="tag">Test your understanding</p>
+    </div>
+
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="biotic.html">Biotic</a>
+      <a href="abiotic.html">Abiotic</a>
+      <a href="awareness.html">Awareness</a>
+      <a href="quiz.html" class="active">Quiz</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Main Quiz Section -->
+<main class="container">
+  <section class="quiz">
+    <h2>5-Question Interactive Quiz</h2>
+
+    <!-- Fade-up animation wrapper -->
+    <div id="quizContainer" style="animation:fadeUp 0.7s ease-out;">
+      <!-- JS injects questions here -->
+    </div>
+
+    <div class="quiz-controls">
+      <button id="prevBtn" class="btn ghost">Previous</button>
+      <button id="nextBtn" class="btn">Next</button>
+      <button id="submitBtn" class="btn" style="display:none">Submit</button>
+    </div>
+
+    <div id="result" class="result" aria-live="polite"></div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© 2025 Environment Explorer</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
